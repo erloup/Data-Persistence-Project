@@ -5,19 +5,19 @@ using UnityEngine;
 
 public class MainManager : MonoBehaviour
 {
-    public static MainManager instance;
+    public static MainManager Instance;
     public string name;
     public Dictionary<string, int> scores;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        if(instance != null)
+        if(Instance != null)
         {
             Destroy(gameObject);
             return;
         }
-        instance = this;
+        Instance = this;
         DontDestroyOnLoad(gameObject);
         LoadInfo();
     }
@@ -49,7 +49,9 @@ public class MainManager : MonoBehaviour
 
             name = data.name;
             scores = data.scores;
+            if (scores == null) scores = new Dictionary<string, int>();
         }
+        else scores = new Dictionary<string, int>();
     }
 
 }
