@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static MainManager;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,7 +18,6 @@ public class GameManager : MonoBehaviour
     private bool m_Started = false;
     private int m_Points;
     
-    private bool m_GameOver = false;
 
     
     // Start is called before the first frame update
@@ -37,29 +38,28 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        Dictionary<string, int> scores =  MainManager.Instance.scores;
+        List<PlayerScore> scores =  MainManager.Instance.scores;
         if(scores == null || scores.Count == 0)
         {
             BestScoreText.text = "Best Score : " + MainManager.Instance.name + " : 0";
         }
         else
         {
-            int bestScore = 0;
-            string nameBest = null;
-            foreach(KeyValuePair<string, int> score in scores)
+            PlayerScore best = new PlayerScore();
+            bool debut = true;
+            foreach(PlayerScore score in scores)
             {
-                if(name == null)
+                if (debut)
                 {
-                    bestScore = score.Value;
-                    nameBest = score.Key;
+                    best = score;
+                    debut = false;
                 }
-                else if(score.Value >= bestScore)
+                else
                 {
-                    bestScore = score.Value;
-                    nameBest = score.Key;
+                    if (score.score >= best.score) best = score;
                 }
             }
-            BestScoreText.text = "Best Score : " + nameBest + " : " + bestScore;
+            BestScoreText.text = "Best Score : " + best.name + " : " + best.score.ToString();
         }
     }
 
@@ -78,13 +78,6 @@ public class GameManager : MonoBehaviour
                 Ball.AddForce(forceDir * 2.0f, ForceMode.VelocityChange);
             }
         }
-        else if (m_GameOver)
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            }
-        }
     }
 
     void AddPoint(int point)
@@ -95,6 +88,7 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
-        m_GameOver = true;
+        MainManager.Instance.scores.Add(new PlayerScore() { name = MainManager.Instance.name, score = m_Points }); ;
+        SceneManager.LoadScene(2);
     }
 }

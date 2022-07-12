@@ -5,9 +5,14 @@ using UnityEngine;
 
 public class MainManager : MonoBehaviour
 {
+    public struct PlayerScore
+    {
+        public string name;
+        public int score;
+    }
     public static MainManager Instance;
     public string name;
-    public Dictionary<string, int> scores;
+    public List<PlayerScore> scores;
 
     // Start is called before the first frame update
     void Awake()
@@ -25,7 +30,7 @@ public class MainManager : MonoBehaviour
     [System.Serializable]
     class SaveData
     {
-        public Dictionary<string, int> scores;
+        public List<PlayerScore> scores;
         public string name;
     }
 
@@ -49,9 +54,9 @@ public class MainManager : MonoBehaviour
 
             name = data.name;
             scores = data.scores;
-            if (scores == null) scores = new Dictionary<string, int>();
+            if (scores == null) scores = new List<PlayerScore>();
         }
-        else scores = new Dictionary<string, int>();
+        else scores = new List<PlayerScore>();
     }
 
 }
